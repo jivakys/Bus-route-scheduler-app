@@ -1,0 +1,18 @@
+{
+  "name": "bus-route-scheduler-app",
+  "version": "1.0.0",
+  "description": "this app use for planning bus routes, stops and track buses in real time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "Jivak",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.0",
+    "nodemon": "^3.1.10"
+  }
+}
