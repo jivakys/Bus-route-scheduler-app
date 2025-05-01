@@ -19,7 +19,7 @@ const io = new Server(httpServer, {
 // Middleware
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Temporarily disable CSP for development
+    contentSecurityPolicy: false,
   })
 );
 app.use(cors());

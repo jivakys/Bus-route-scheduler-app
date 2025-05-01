@@ -58,6 +58,7 @@ router.post(
           email: user.email,
           role: user.role,
         },
+        message: "Register Successfully",
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -106,6 +107,7 @@ router.post(
           email: user.email,
           role: user.role,
         },
+        message: "Login Successfully",
       });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
