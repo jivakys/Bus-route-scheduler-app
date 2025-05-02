@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
-const User = require("../models/User");
+const UserModel = require("../models/UserModel");
 const { auth } = require("../middlewares/auth");
 
 // Register a new user
@@ -27,14 +27,14 @@ router.post(
       const { username, email, password, role } = req.body;
 
       // Check if user already exists
-      let user = await User.findOne({ $or: [{ email }, { username }] });
+      let user = await UserModel.findOne({ $or: [{ email }, { username }] });
       if (user) {
         console.log("User already exists:", { email, username });
         return res.status(400).json({ message: "User already exists" });
       }
 
       // Create new user
-      user = new User({
+      user = new UserModel({
         username,
         email,
         password,
@@ -84,7 +84,7 @@ router.post(
       const { email, password } = req.body;
 
       // Check if user exists
-      const user = await User.findOne({ email });
+      const user = await UserModel.findOne({ email });
       if (!user) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
@@ -118,11 +118,11 @@ router.post(
 // Get current user
 router.get("/me", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await UserModel.findById(req.user._id).select("-password");
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-module.exports = router;
+module.exports = router; 

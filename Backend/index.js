@@ -52,10 +52,11 @@ io.on("connection", (socket) => {
 });
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/routes", require("./routes/routes"));
-app.use("/api/stops", require("./routes/stops"));
-app.use("/api/schedules", require("./routes/schedules"));
+app.use("/api/auth", require("./routes/authRoute"));
+app.use("/api/buses", require("./routes/busRoute"));
+app.use("/api/routes", require("./routes/routeRoute"));
+app.use("/api/stops", require("./routes/stopRoute"));
+app.use("/api/schedules", require("./routes/scheduleRoute"));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
