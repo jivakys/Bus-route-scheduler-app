@@ -15,6 +15,7 @@ A comprehensive bus route scheduling and management system with real-time tracki
 ## Tech Stack
 
 ### Backend
+
 - Node.js
 - Express.js
 - MongoDB
@@ -23,6 +24,7 @@ A comprehensive bus route scheduling and management system with real-time tracki
 - Express Validator
 
 ### Frontend (Coming Soon)
+
 - React.js
 - Redux
 - Material-UI
@@ -38,18 +40,21 @@ A comprehensive bus route scheduling and management system with real-time tracki
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/bus-route-scheduler-app.git
 cd bus-route-scheduler-app
 ```
 
 2. Install backend dependencies:
+
 ```bash
 cd Backend
 npm install
 ```
 
 3. Create a .env file in the Backend directory with the following variables:
+
 ```
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/bus-scheduler
@@ -59,6 +64,7 @@ NODE_ENV=development
 ```
 
 4. Start the backend server:
+
 ```bash
 npm run dev
 ```
@@ -66,11 +72,13 @@ npm run dev
 ## API Endpoints
 
 ### Authentication
+
 - POST /api/auth/register - Register a new user
 - POST /api/auth/login - Login user
 - GET /api/auth/me - Get current user
 
 ### Routes
+
 - GET /api/routes - Get all routes
 - GET /api/routes/:id - Get a single route
 - POST /api/routes - Create a new route (admin only)
@@ -78,6 +86,7 @@ npm run dev
 - DELETE /api/routes/:id - Delete a route (admin only)
 
 ### Stops
+
 - GET /api/stops - Get all stops
 - GET /api/stops/:id - Get a single stop
 - POST /api/stops - Create a new stop (admin only)
@@ -86,6 +95,7 @@ npm run dev
 - GET /api/stops/nearby - Find stops near a location
 
 ### Schedules
+
 - GET /api/schedules - Get all schedules
 - GET /api/schedules/:id - Get a single schedule
 - POST /api/schedules - Create a new schedule (admin only)
@@ -94,6 +104,7 @@ npm run dev
 - GET /api/schedules/date/:date - Get schedules for a specific date
 
 ### Buses
+
 - GET /api/buses - Get all buses
 - GET /api/buses/:id - Get a single bus
 - POST /api/buses - Create a new bus (admin only)
