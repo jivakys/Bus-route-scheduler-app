@@ -1,4 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            // Decode the token to get user info
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const username = payload.username;
+            const role = payload.role;
+            
+            // Show user profile and hide login buttons
+            const userProfile = document.getElementById('userProfile');
+            const loginButtons = document.getElementById('loginButtons');
+            const userName = document.getElementById('userName');
+            
+            if (userProfile && loginButtons && userName) {
+                userProfile.style.display = 'flex';
+                loginButtons.style.display = 'none';
+                userName.textContent = username;
+            }
+
+            // If user is admin, redirect to admin panel
+            if (role === 'admin' && !window.location.pathname.includes('admin')) {
+                window.location.href = '/html/admin.html';
+            }
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            localStorage.removeItem('token');
+        }
+    }
+
+    // Handle logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        });
+    }
+
     // Handle login form submission
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
@@ -8,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/login', {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -19,7 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
-                    window.location.href = '/';
+                    // Check if user is admin
+                    const payload = JSON.parse(atob(data.token.split('.')[1]));
+                    if (payload.role === 'admin') {
+                        window.location.href = '/html/admin.html';
+                    } else {
+                        window.location.href = '/';
+                    }
                 } else {
                     alert(data.message || 'Login failed');
                 }
@@ -64,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/register', {
+                const response = await fetch('http://localhost:3000/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
