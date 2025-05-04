@@ -25,11 +25,9 @@ A comprehensive bus route scheduling and management system with real-time tracki
 
 ### Frontend (Coming Soon)
 
-- React.js
-- Redux
-- Material-UI
-- Mapbox/Google Maps
-- Socket.io Client
+- HTML
+- CSS
+- JavaScript
 
 ## Prerequisites
 
