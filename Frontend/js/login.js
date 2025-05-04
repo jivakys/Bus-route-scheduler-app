@@ -1,3 +1,7 @@
+// Constants
+const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
+const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   const errorMessage = document.getElementById("errorMessage");
@@ -9,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch("http://localhost:3000/api/auth/login", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -21,35 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Full login response:", data);
 
         if (response.ok) {
-          // Store token
-          localStorage.setItem("token", data.token);
-          console.log("Token stored:", data.token);
-
-          // Get username from response
-          let username = "";
-          if (data.user && data.user.username) {
-            username = data.user.username;
-          } else if (data.username) {
-            username = data.username;
-          } else {
-            // Try to get from token payload
-            const payload = JSON.parse(atob(data.token.split(".")[1]));
-            console.log("Token payload:", payload);
-            username = payload.username || email.split("@")[0]; // Use email prefix as fallback
-          }
-
-          // Store username
-          localStorage.setItem("username", username);
-          console.log("Username stored:", username);
+          // Store token and user info
+          localStorage.setItem("adminToken", data.token);
+          localStorage.setItem("userRole", data.role);
+          localStorage.setItem("userName", data.name);
 
           // Redirect based on role
-          const payload = JSON.parse(atob(data.token.split(".")[1]));
-          console.log("User role:", payload.role);
-          
-          if (payload.role === "admin") {
-            window.location.href = "./admin.html";
+          if (data.role === "admin") {
+            window.location.href = `${FRONTEND_URL}/html/admin.html`;
           } else {
-            window.location.href = "../index.html";
+            window.location.href = `${FRONTEND_URL}/index.html`;
           }
         } else {
           if (errorMessage) {
