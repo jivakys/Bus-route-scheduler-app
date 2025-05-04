@@ -47,10 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Login error:", error);
         if (errorMessage) {
-          errorMessage.textContent = "An error occurred during login";
+          errorMessage.textContent = "An error occurred during login. Please check your connection.";
           errorMessage.style.display = "block";
         } else {
-          alert("An error occurred during login");
+          alert("An error occurred during login. Please check your connection.");
         }
       }
     });
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Only check token and redirect if we're not already on the login page
   const currentPath = window.location.pathname;
   if (!currentPath.includes("login.html")) {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -68,14 +68,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (payload.role === "admin") {
           console.log("Token check - Redirecting to admin page...");
-          window.location.href = "../html/admin.html";
+          window.location.href = `${FRONTEND_URL}/html/admin.html`;
         } else {
           console.log("Token check - Redirecting to index page...");
-          window.location.href = "../index.html";
+          window.location.href = `${FRONTEND_URL}/index.html`;
         }
       } catch (error) {
         console.error("Token check error:", error);
-        localStorage.removeItem("token");
+        localStorage.removeItem("adminToken");
       }
     }
   }
