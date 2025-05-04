@@ -286,6 +286,42 @@
         </main>
     </div>
 
+    <!-- Configuration for deployed environment -->
+    <script>
+        const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
+        const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+        
+        // Check if user is authenticated
+        const checkAuth = async () => {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = `${FRONTEND_URL}/html/login.html`;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
+                }
+                
+                const data = await response.json();
+                document.getElementById('adminName').textContent = data.name || 'Admin';
+            } catch (error) {
+                console.error('Auth error:', error);
+                window.location.href = `${FRONTEND_URL}/html/login.html`;
+            }
+        };
+        
+        // Initialize auth check
+        checkAuth();
+    </script>
+
     <!-- Main Admin Script -->
     <script src="../js/admin.js"></script>
     <!-- Admin Section Scripts -->
