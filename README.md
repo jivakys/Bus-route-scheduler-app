@@ -40,7 +40,7 @@ A comprehensive bus route scheduling and management system with real-time tracki
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/bus-route-scheduler-app.git
+git clone https://github.com/jivakys/Bus-route-scheduler-app.git
 cd bus-route-scheduler-app
 ```
 
@@ -55,10 +55,9 @@ npm install
 
 ```
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/bus-scheduler
+MONGODB_URL=mongodb://localhost:27017/bus-scheduler
 JWT_SECRET=your_jwt_secret_key_here
 FRONTEND_URL=http://localhost:3000
-NODE_ENV=development
 ```
 
 4. Start the backend server:
@@ -110,20 +109,17 @@ npm run dev
 - DELETE /api/buses/:id - Delete a bus (admin only)
 - PATCH /api/buses/:id/location - Update bus location
 
-## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
 
-Your Name - your.email@example.com
+Your Name - jivakysute@gmail.com
+Project Link: [https://github.com/yourusername/bus-route-scheduler-app](https://github.com/jivakys/Bus-route-scheduler-app.git)
 
-Project Link: https://github.com/yourusername/bus-route-scheduler-app
+## Screenshots
+
+### Home Page
+![Screenshot](https://github.com/user-attachments/assets/aa38e0c1-3b7c-483c-888d-bb94f543ca7a)
+
+### Admin Panel
+![Screenshot2](https://github.com/user-attachments/assets/a1e3cc3c-2a4c-41a0-90b7-f1d05df0f57d)
