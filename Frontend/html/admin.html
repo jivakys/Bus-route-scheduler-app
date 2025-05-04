@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Bus Route Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f6fa;
+        }
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            width: 250px;
+            min-width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-main {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: #f5f6fa;
+            min-height: 100vh;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .admin-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .dashboard-container {
+            padding: 2rem 0 0 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        .recent-data {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .recent-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        .recent-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+        .admin-table thead {
+            background-color: #f8f9fa;
+        }
+        .admin-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+        }
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+        .admin-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .admin-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status.active {
+            background-color: #e3fcef;
+            color: #0e9f6e;
+        }
+        .status.scheduled {
+            background-color: #e1effe;
+            color: #3b82f6;
+        }
+        .status.completed {
+            background-color: #f3f4f6;
+            color: #6b7280;
+        }
+        .status.cancelled {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+        @media (max-width: 900px) {
+            .admin-main {
+                padding: 1rem;
+            }
+            .dashboard-container {
+                padding: 1rem 0 0 0;
+            }
+        }
+        @media (max-width: 600px) {
+            .admin-sidebar {
+                width: 100vw;
+                min-width: 0;
+                position: relative;
+                height: auto;
+            }
+            .admin-main {
+                margin-left: 0;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" data-section="routes"><i class="fas fa-route"></i> Routes</a></li>
+                <li><a href="#" data-section="buses"><i class="fas fa-bus"></i> Buses</a></li>
+                <li><a href="#" data-section="schedules"><i class="fas fa-calendar-alt"></i> Schedules</a></li>
+                <li><a href="#" data-section="users"><i class="fas fa-users"></i> Users</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="./login.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="welcome-text">Welcome, <span id="adminName">Admin</span></span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="dashboard-container">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Routes</h3>
+                            <p id="totalRoutes">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Buses</h3>
+                            <p id="totalBuses">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Users</h3>
+                            <p id="totalUsers">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Bookings</h3>
+                            <p id="activeBookings">0</p>
+                        </div>
+                    </div>
+
+                    <div class="recent-data">
+                        <div class="recent-card">
+                            <h3>Recent Routes</h3>
+                            <div class="table-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Route Number</th>
+                                            <th>Start Point</th>
+                                            <th>End Point</th>
+                                            <th>Created At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentRoutes">
+                                        <!-- Recent routes will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-card">
+                            <h3>Recent Bookings</h3>
+                            <div class="table-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Bus Number</th>
+                                            <th>Route</th>
+                                            <th>Departure Time</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentBookings">
+                                        <!-- Recent bookings will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Main Admin Script -->
+    <script src="../js/admin.js"></script>
+    <!-- Admin Section Scripts -->
+    <script src="../js/admin/routes.js"></script>
+    <script src="../js/admin/buses.js"></script>
+    <script src="../js/admin/schedules.js"></script>
+    <script src="../js/admin/users.js"></script>
+</body>
+
+</html>

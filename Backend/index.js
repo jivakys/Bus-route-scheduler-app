@@ -9,24 +9,40 @@ require("dotenv").config();
 
 const app = express();
 const httpServer = createServer(app);
+
+// CORS configuration
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5000",
+      "http://127.0.0.1:5000",
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+      "http://127.0.0.1:3000",
+      "http://localhost:3000",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  })
+);
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5000",
+    origin: ["http://localhost:5000", "http://127.0.0.1:5000"],
+
     methods: ["GET", "POST"],
   },
 });
 
-// Middleware
 app.use(
   helmet({
     contentSecurityPolicy: false,
   })
 );
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the Frontend directory
 app.use(
   express.static(path.join(__dirname, "../Frontend"), {
     setHeaders: (res, path) => {
@@ -57,6 +73,8 @@ app.use("/api/buses", require("./routes/busRoute"));
 app.use("/api/routes", require("./routes/routeRoute"));
 app.use("/api/stops", require("./routes/stopRoute"));
 app.use("/api/schedules", require("./routes/scheduleRoute"));
+app.use("/api/admin", require("./routes/adminRoute"));
+app.use("/api/users", require("./routes/userRoute"));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -69,7 +87,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../Frontend/index.html"));
 });
 
-const PORT = process.env.PORT;
+const PORT = 3000;
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
