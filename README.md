@@ -5,7 +5,6 @@ A comprehensive bus route scheduling and management system with real-time tracki
 ## Features
 
 - Admin panel for route planning and management
-- Real-time bus tracking
 - Stop management
 - Schedule management
 - User authentication and authorization
