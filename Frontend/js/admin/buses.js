@@ -170,15 +170,15 @@ function showAddBusModal() {
     
     try {
       const busData = {
-        busNumber: document.getElementById("busNumber").value,
-        type: document.getElementById("busType").value,
+      busNumber: document.getElementById("busNumber").value,
+      type: document.getElementById("busType").value,
         capacity: parseInt(document.getElementById("capacity").value),
-        status: document.getElementById("status").value,
+      status: document.getElementById("status").value,
       };
 
       const success = await addBus(busData);
       if (success) {
-        modal.remove();
+    modal.remove();
       }
     } catch (error) {
       errorMessage.textContent = error.message || 'Failed to add bus. Please try again.';

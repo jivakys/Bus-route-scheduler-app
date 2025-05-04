@@ -12,7 +12,6 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
@@ -20,8 +19,9 @@
                 <div class="nav-links">
                     <a href="#features">Features</a>
                     <a href="#search">Search</a>
-                    <a href="#about">About</a>
+                    <a href="./html/operator.html">Operator Dashboard</a>
                     <a href="#contact">Contact</a>
+                    <a href="./html/admin.html" id="adminLink" style="display: none;">Admin Panel</a>
                 </div>
                 <div class="auth-buttons">
                     <div id="userProfile" class="user-profile" style="display: none;">
@@ -37,7 +37,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1>Plan Your Journey with Ease</h1>
@@ -46,7 +45,6 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
             <h2>Why Choose Us</h2>
@@ -142,6 +140,7 @@
         </div>
     </footer>
 
+    <script src="./js/auth.js"></script>
     <script>
         // Add smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

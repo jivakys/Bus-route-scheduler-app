@@ -22,19 +22,10 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Get a single bus with populated schedules
+// Get a single bus by ID
 router.get('/:id', auth, async (req, res) => {
   try {
-    const bus = await BusModel.findById(req.params.id)
-      .populate({
-        path: 'schedules',
-        select: 'departureTime arrivalTime status route',
-        populate: {
-          path: 'route',
-          select: 'routeNumber startPoint endPoint'
-        }
-      });
-    
+    const bus = await BusModel.findById(req.params.id);
     if (!bus) {
       return res.status(404).json({ message: 'Bus not found' });
     }

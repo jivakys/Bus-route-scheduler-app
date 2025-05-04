@@ -4,6 +4,12 @@ const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const UserModel = require("../models/UserModel");
 const { auth } = require("../middlewares/auth");
+const bcrypt = require("bcrypt");
+
+// Health check endpoint
+router.get("/check", (req, res) => {
+    res.status(200).json({ status: "ok", message: "Server is running" });
+});
 
 // Register a new user
 router.post(
@@ -46,9 +52,16 @@ router.post(
       console.log("User saved successfully");
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "24h",
-      });
+      const token = jwt.sign(
+        { 
+          userId: user._id,
+          role: user.role 
+        }, 
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "24h",
+        }
+      );
 
       res.status(201).json({
         token,
@@ -95,9 +108,16 @@ router.post(
         return res.status(400).json({ message: "Invalid credentials" });
       }
 
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "24h",
-      });
+      const token = jwt.sign(
+        { 
+          userId: user._id,
+          role: user.role 
+        }, 
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "24h",
+        }
+      );
 
       res.json({
         token,

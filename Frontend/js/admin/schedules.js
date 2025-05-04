@@ -190,7 +190,7 @@ async function showAddScheduleModal() {
             const bus = buses.find(b => b._id === busId);
             
             const scheduleData = {
-                route: document.getElementById('route').value,
+            route: document.getElementById('route').value,
                 bus: busId,
                 departureTime: new Date(document.getElementById('departureTime').value).toISOString(),
                 arrivalTime: new Date(document.getElementById('arrivalTime').value).toISOString(),
@@ -200,7 +200,7 @@ async function showAddScheduleModal() {
 
             const success = await addSchedule(scheduleData);
             if (success) {
-                modal.remove();
+        modal.remove();
             }
         } catch (error) {
             errorMessage.textContent = error.message || 'Failed to add schedule. Please try again.';

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ScheduleModel = require('../models/ScheduleModel');
 const BusModel = require('../models/BusModel');
-const RouteModel = require('../models/RouteModel');
+const Route = require('../models/Route');
 const { auth, adminAuth } = require('../middlewares/auth');
 
 // Get all schedules with optional filters
@@ -71,7 +71,7 @@ router.post('/', adminAuth, async (req, res) => {
     }
     
     // Check if route exists
-    const routeExists = await RouteModel.findById(route);
+    const routeExists = await Route.findById(route);
     if (!routeExists) {
       return res.status(404).json({ message: 'Route not found' });
     }

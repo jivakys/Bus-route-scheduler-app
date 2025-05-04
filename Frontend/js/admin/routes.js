@@ -179,8 +179,8 @@ function showAddRouteModal() {
         try {
             const routeData = {
                 routeNumber: document.getElementById('routeNumber').value,
-                startPoint: document.getElementById('startPoint').value,
-                endPoint: document.getElementById('endPoint').value,
+            startPoint: document.getElementById('startPoint').value,
+            endPoint: document.getElementById('endPoint').value,
                 distance: parseFloat(document.getElementById('distance').value),
                 estimatedTime: parseInt(document.getElementById('estimatedTime').value),
                 status: document.getElementById('status').value
@@ -188,7 +188,7 @@ function showAddRouteModal() {
 
             const success = await addRoute(routeData);
             if (success) {
-                modal.remove();
+        modal.remove();
             }
         } catch (error) {
             errorMessage.textContent = error.message || 'Failed to add route. Please try again.';

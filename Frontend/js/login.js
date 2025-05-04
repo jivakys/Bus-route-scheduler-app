@@ -18,21 +18,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await response.json();
-        console.log("Login response:", data);
+        console.log("Full login response:", data);
 
         if (response.ok) {
+          // Store token
           localStorage.setItem("token", data.token);
-          console.log("Token stored in localStorage");
+          console.log("Token stored:", data.token);
 
+          // Get username from response
+          let username = "";
+          if (data.user && data.user.username) {
+            username = data.user.username;
+          } else if (data.username) {
+            username = data.username;
+          } else {
+            // Try to get from token payload
+            const payload = JSON.parse(atob(data.token.split(".")[1]));
+            console.log("Token payload:", payload);
+            username = payload.username || email.split("@")[0]; // Use email prefix as fallback
+          }
+
+          // Store username
+          localStorage.setItem("username", username);
+          console.log("Username stored:", username);
+
+          // Redirect based on role
           const payload = JSON.parse(atob(data.token.split(".")[1]));
-          // console.log("Decoded token payload:", payload);
-          // console.log("User role:", payload.role);
-
+          console.log("User role:", payload.role);
+          
           if (payload.role === "admin") {
-            // console.log("Redirecting to admin page...");
             window.location.href = "./admin.html";
           } else {
-            // console.log("Redirecting to index page...");
             window.location.href = "../index.html";
           }
         } else {
