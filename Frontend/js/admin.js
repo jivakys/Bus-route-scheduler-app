@@ -1,25 +1,134 @@
 // Admin Panel Main Script
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if user is logged in and is an admin
-  const token = localStorage.getItem("token");
-  if (!token) {
-    window.location.href = "./login.html";
-    return;
-  }
+  // Constants
+  const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
+  const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
 
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    if (payload.role !== "admin") {
-      window.location.href = "../index.html";
+  // DOM Elements
+  const sidebarLinks = document.querySelectorAll(".sidebar-menu a");
+  const adminContent = document.querySelector(".admin-content");
+  const logoutBtn = document.querySelector(".logout-btn");
+
+  // Fetch data with authentication
+  const fetchWithAuth = async (endpoint, options = {}) => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      window.location.href = `${FRONTEND_URL}/html/login.html`;
       return;
     }
-  } catch (error) {
-    window.location.href = "./login.html";
-    return;
-  }
 
-  // Initialize admin panel
-  initializeAdminPanel();
+    const defaultOptions = {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...defaultOptions,
+        ...options
+      });
+
+      if (response.status === 401) {
+        // Token expired or invalid
+        localStorage.removeItem("adminToken");
+        window.location.href = `${FRONTEND_URL}/html/login.html`;
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
+    }
+  };
+
+  // Load Dashboard Data
+  const loadDashboard = async () => {
+    try {
+      const [routes, buses, users, bookings] = await Promise.all([
+        fetchWithAuth("/api/routes"),
+        fetchWithAuth("/api/buses"),
+        fetchWithAuth("/api/users"),
+        fetchWithAuth("/api/bookings")
+      ]);
+
+      // Update stats
+      document.getElementById("totalRoutes").textContent = routes.length;
+      document.getElementById("totalBuses").textContent = buses.length;
+      document.getElementById("totalUsers").textContent = users.length;
+      document.getElementById("activeBookings").textContent = 
+        bookings.filter(b => b.status === "active").length;
+
+      // Update recent routes
+      const recentRoutesHtml = routes.slice(0, 5).map(route => `
+        <tr>
+          <td>${route.routeNumber}</td>
+          <td>${route.startPoint}</td>
+          <td>${route.endPoint}</td>
+          <td>${new Date(route.createdAt).toLocaleDateString()}</td>
+        </tr>
+      `).join("");
+      document.getElementById("recentRoutes").innerHTML = recentRoutesHtml;
+
+      // Update recent bookings
+      const recentBookingsHtml = bookings.slice(0, 5).map(booking => `
+        <tr>
+          <td>${booking.busNumber}</td>
+          <td>${booking.route}</td>
+          <td>${new Date(booking.departureTime).toLocaleString()}</td>
+          <td><span class="status ${booking.status}">${booking.status}</span></td>
+        </tr>
+      `).join("");
+      document.getElementById("recentBookings").innerHTML = recentBookingsHtml;
+    } catch (error) {
+      console.error("Error loading dashboard:", error);
+      // Show error message to user
+      adminContent.innerHTML = `
+        <div class="error-message">
+          <h3>Error Loading Dashboard</h3>
+          <p>Please try again later or contact support if the problem persists.</p>
+        </div>
+      `;
+    }
+  };
+
+  // Handle Sidebar Navigation
+  sidebarLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const section = link.getAttribute("data-section");
+      
+      // Update active state
+      sidebarLinks.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      
+      // Update header title
+      document.querySelector(".header-left h1").textContent = 
+        section.charAt(0).toUpperCase() + section.slice(1);
+      
+      // Load section content
+      if (section === "dashboard") {
+        loadDashboard();
+      }
+      // Other sections will be handled by their respective JS files
+    });
+  });
+
+  // Handle Logout
+  logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("adminToken");
+    window.location.href = `${FRONTEND_URL}/html/login.html`;
+  });
+
+  // Initialize Dashboard
+  loadDashboard();
 });
 
 function initializeAdminPanel() {

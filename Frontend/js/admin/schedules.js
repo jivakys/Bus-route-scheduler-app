@@ -1,85 +1,155 @@
-// Schedules Management
-async function loadSchedulesSection() {
-    const contentDiv = document.querySelector('.admin-content');
-    if (!contentDiv) return;
+// Constants
+const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
+const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
 
-    // Create schedules section HTML
-    contentDiv.innerHTML = `
-        <div class="admin-section">
-            <div class="section-header">
-                <h2>Schedules Management</h2>
-                <button class="btn btn-primary" id="addScheduleBtn">Add New Schedule</button>
-            </div>
-            <div class="schedules-list" id="schedulesList">
-                <!-- Schedules will be loaded here -->
-            </div>
-        </div>
-    `;
+// Fetch data with authentication
+const fetchWithAuth = async (endpoint, options = {}) => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+        window.location.href = `${FRONTEND_URL}/html/login.html`;
+        return;
+    }
 
-    // Load schedules
-    await loadSchedules();
+    const defaultOptions = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    };
 
-    // Add event listeners
-    document.getElementById('addScheduleBtn').addEventListener('click', showAddScheduleModal);
-}
-
-async function loadSchedules() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/schedules', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...defaultOptions,
+            ...options
         });
 
-        if (response.ok) {
-            const schedules = await response.json();
-            displaySchedules(schedules);
-        } else {
-            console.error('Failed to fetch schedules');
+        if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = `${FRONTEND_URL}/html/login.html`;
+            return;
         }
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
     } catch (error) {
-        console.error('Error fetching schedules:', error);
+        console.error('Fetch error:', error);
+        throw error;
     }
-}
+};
 
-function displaySchedules(schedules) {
-    const schedulesList = document.getElementById('schedulesList');
-    if (!schedulesList) return;
+// Load Schedules Section
+const loadSchedulesSection = async () => {
+    try {
+        const schedules = await fetchWithAuth('/api/schedules');
+        
+        const schedulesTable = document.querySelector('.admin-content');
+        schedulesTable.innerHTML = `
+            <div class="section-header">
+                <h2>Schedules Management</h2>
+                <button class="add-btn" onclick="showAddScheduleModal()">
+                    <i class="fas fa-plus"></i> Add Schedule
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Route</th>
+                            <th>Bus</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedulesTableBody">
+                        ${schedules.map(schedule => `
+                            <tr>
+                                <td>${schedule.route}</td>
+                                <td>${schedule.bus}</td>
+                                <td>${new Date(schedule.departureTime).toLocaleString()}</td>
+                                <td>${new Date(schedule.arrivalTime).toLocaleString()}</td>
+                                <td><span class="status ${schedule.status}">${schedule.status}</span></td>
+                                <td>
+                                    <button class="edit-btn" onclick="editSchedule('${schedule._id}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-btn" onclick="deleteSchedule('${schedule._id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading schedules:', error);
+        document.querySelector('.admin-content').innerHTML = `
+            <div class="error-message">
+                <h3>Error Loading Schedules</h3>
+                <p>Please try again later or contact support if the problem persists.</p>
+            </div>
+        `;
+    }
+};
 
-    schedulesList.innerHTML = `
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Route</th>
-                    <th>Bus</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Seats Available</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${schedules.map(schedule => `
-                    <tr>
-                        <td>${schedule.route.routeNumber} (${schedule.route.startPoint} - ${schedule.route.endPoint})</td>
-                        <td>${schedule.bus.busNumber} (${schedule.bus.type})</td>
-                        <td>${new Date(schedule.departureTime).toLocaleString()}</td>
-                        <td>${new Date(schedule.arrivalTime).toLocaleString()}</td>
-                        <td>${schedule.seatsAvailable}</td>
-                        <td>${schedule.status}</td>
-                        <td>
-                            <button class="btn btn-sm btn-edit" onclick="editSchedule('${schedule._id}')">Edit</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteSchedule('${schedule._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
-}
+// Add Schedule
+const addSchedule = async (scheduleData) => {
+    try {
+        await fetchWithAuth('/api/schedules', {
+            method: 'POST',
+            body: JSON.stringify(scheduleData)
+        });
+        await loadSchedulesSection();
+    } catch (error) {
+        console.error('Error adding schedule:', error);
+        throw error;
+    }
+};
 
+// Edit Schedule
+const editSchedule = async (scheduleId, scheduleData) => {
+    try {
+        await fetchWithAuth(`/api/schedules/${scheduleId}`, {
+            method: 'PUT',
+            body: JSON.stringify(scheduleData)
+        });
+        await loadSchedulesSection();
+    } catch (error) {
+        console.error('Error editing schedule:', error);
+        throw error;
+    }
+};
+
+// Delete Schedule
+const deleteSchedule = async (scheduleId) => {
+    if (!confirm('Are you sure you want to delete this schedule?')) return;
+    
+    try {
+        await fetchWithAuth(`/api/schedules/${scheduleId}`, {
+            method: 'DELETE'
+        });
+        await loadSchedulesSection();
+    } catch (error) {
+        console.error('Error deleting schedule:', error);
+        throw error;
+    }
+};
+
+// Export functions
+window.scheduleFunctions = {
+    loadSchedulesSection,
+    addSchedule,
+    editSchedule,
+    deleteSchedule
+};
+
+// Schedules Management
 async function showAddScheduleModal() {
     // Fetch routes and buses for dropdowns
     const [routes, buses] = await Promise.all([
@@ -251,61 +321,7 @@ async function fetchBuses() {
     }
 }
 
-async function addSchedule(scheduleData) {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('Authentication token not found. Please login again.');
-        }
-
-        const response = await fetch('http://localhost:3000/api/schedules', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(scheduleData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to add schedule');
-        }
-
-        await loadSchedules();
-        return true;
-    } catch (error) {
-        console.error('Error adding schedule:', error);
-        throw error;
-    }
-}
-
-async function editSchedule(scheduleId) {
-    try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            throw new Error('Authentication token not found. Please login again.');
-        }
-
-        const response = await fetch(`http://localhost:3000/api/schedules/${scheduleId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch schedule details');
-        }
-
-        const schedule = await response.json();
-        showEditScheduleModal(schedule);
-    } catch (error) {
-        console.error('Error fetching schedule details:', error);
-        alert('Failed to load schedule details. Please try again.');
-    }
-}
-
-function showEditScheduleModal(schedule) {
+async function showEditScheduleModal(schedule) {
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.style.cssText = `
@@ -434,7 +450,7 @@ function showEditScheduleModal(schedule) {
             }
 
             modal.remove();
-            await loadSchedules();
+            await loadSchedulesSection();
         } catch (error) {
             errorMessage.textContent = error.message || 'Failed to update schedule. Please try again.';
             errorMessage.style.display = 'block';
@@ -453,39 +469,6 @@ function showEditScheduleModal(schedule) {
         }
     });
 }
-
-async function deleteSchedule(scheduleId) {
-    if (!confirm('Are you sure you want to delete this schedule?')) return;
-
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3000/api/schedules/${scheduleId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.ok) {
-            await loadSchedules();
-        } else {
-            console.error('Failed to delete schedule');
-        }
-    } catch (error) {
-        console.error('Error deleting schedule:', error);
-    }
-}
-
-// Export functions
-window.scheduleFunctions = {
-    loadSchedulesSection,
-    loadSchedules,
-    addSchedule,
-    editSchedule,
-    deleteSchedule,
-    showAddScheduleModal,
-    showEditScheduleModal
-};
 
 // Make functions available globally
 window.showAddScheduleModal = showAddScheduleModal;
