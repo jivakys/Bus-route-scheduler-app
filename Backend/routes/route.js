@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Route = require('../models/Route');
+const Route = require('../models/RouteModel');
 const { auth } = require('../middlewares/auth');
 
 // Get all routes
