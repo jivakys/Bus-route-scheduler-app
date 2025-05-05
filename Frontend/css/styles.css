@@ -36,11 +36,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  /* padding: 1rem 0; */
   width: 100%;
   min-height: 70px;
   background: var(--primary-color) !important;
-  border-bottom: 1px solid var(--border-color);
+  /* border-bottom: 1px solid var(--border-color); */
   z-index: 1001;
 }
 

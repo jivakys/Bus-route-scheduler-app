@@ -13,36 +13,50 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
 
       try {
+        console.log("Attempting to login with URL:", `${API_BASE_URL}/api/auth/login`);
+        console.log("Request payload:", { email, password });
+        
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Origin": window.location.origin
           },
+          mode: "cors",
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Login failed with status:", response.status);
+          console.error("Error response:", errorText);
+          throw new Error(`Login failed: ${response.status} ${errorText}`);
+        }
+
         const data = await response.json();
-        console.log("Full login response:", data);
+        console.log("Login successful, response data:", data);
 
-        if (response.ok) {
-          // Store token and user info
-          localStorage.setItem("adminToken", data.token);
-          localStorage.setItem("userRole", data.role);
-          localStorage.setItem("userName", data.name);
+        // Store token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.user?.name || data.name || "User");
+        localStorage.setItem("userRole", data.user?.role || data.role || "user");
 
-          // Redirect based on role
-          if (data.role === "admin") {
-            window.location.href = `${FRONTEND_URL}/html/admin.html`;
-          } else {
-            window.location.href = `${FRONTEND_URL}/index.html`;
-          }
+        console.log("Stored user data:", {
+          token: data.token,
+          username: localStorage.getItem("username"),
+          role: localStorage.getItem("userRole")
+        });
+
+        // Redirect based on role
+        if (data.user?.role === "admin" || data.role === "admin") {
+          window.location.href = `${FRONTEND_URL}/html/admin.html`;
         } else {
-          if (errorMessage) {
-            errorMessage.textContent = data.message || "Login failed";
-            errorMessage.style.display = "block";
-          } else {
-            alert(data.message || "Login failed");
-          }
+          window.location.href = `${FRONTEND_URL}/index.html`;
         }
       } catch (error) {
         console.error("Login error:", error);
@@ -62,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Only check token and redirect if we're not already on the login page
   const currentPath = window.location.pathname;
   if (!currentPath.includes("login.html")) {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -78,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("Token check error:", error);
-        localStorage.removeItem("adminToken");
+        localStorage.removeItem("token");
       }
     }
   }

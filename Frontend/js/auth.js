@@ -2,6 +2,7 @@
 function checkAuthState() {
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
+  const userRole = localStorage.getItem("userRole");
   const userProfile = document.getElementById("userProfile");
   const loginButtons = document.getElementById("loginButtons");
   const userName = document.getElementById("userName");
@@ -9,7 +10,8 @@ function checkAuthState() {
 
   console.log("Auth State Check:");
   console.log("Token:", token ? "Present" : "Missing");
-  console.log("Username from localStorage:", username);
+  console.log("Username:", username);
+  console.log("User Role:", userRole);
   console.log("User Profile Element:", userProfile);
   console.log("Login Buttons Element:", loginButtons);
   console.log("User Name Element:", userName);
@@ -22,13 +24,8 @@ function checkAuthState() {
     console.log("User is logged in, displaying username:", username);
 
     // Check if user is admin
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role === "admin" && adminLink) {
-        adminLink.style.display = "block";
-      }
-    } catch (error) {
-      console.error("Error parsing token:", error);
+    if (userRole === "admin" && adminLink) {
+      adminLink.style.display = "block";
     }
   } else {
     // User is not logged in
@@ -46,9 +43,9 @@ function handleLogout() {
   console.log("Logging out...");
   localStorage.removeItem("token");
   localStorage.removeItem("username");
-  // Check if we're in the html directory
-  const isInHtmlDir = window.location.pathname.includes("/html/");
-  window.location.href = isInHtmlDir ? "../index.html" : "./index.html";
+  localStorage.removeItem("userRole");
+  checkAuthState();
+  window.location.href = `${FRONTEND_URL}/index.html`;
 }
 
 // Initialize auth state when page loads
@@ -83,9 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("username", data.username);
+          localStorage.setItem("userRole", data.role);
           // Check if user is admin
-          const payload = JSON.parse(atob(data.token.split(".")[1]));
-          if (payload.role === "admin") {
+          if (data.role === "admin") {
             window.location.href = "/html/admin.html";
           } else {
             window.location.href = "/";
