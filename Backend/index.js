@@ -12,16 +12,23 @@ const httpServer = createServer(app);
 // CORS configuration for localhost
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [
+      "http://localhost:3000",
+      "https://bus-route-scheduler-app.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
+    origin: [
+      "http://localhost:3000",
+      "https://bus-route-scheduler-app.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   },
 });
 
