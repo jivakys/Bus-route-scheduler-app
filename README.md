@@ -1,6 +1,6 @@
 # Bus Route Scheduler App
 
-A comprehensive bus route scheduling and management system with real-time tracking capabilities.
+A comprehensive bus route scheduling and management system with tracking capabilities.
 
 ## Features
 
@@ -63,6 +63,19 @@ FRONTEND_URL=http://localhost:3000
 
 ```bash
 npm run dev
+```
+## Deployed Link
+```bash
+Backend Link - https://bus-scheduler-backend.onrender.com
+```
+### Admin Creds
+```bash
+email - jivaksute@gmail.com
+password - jivakadmin
+```
+## Postman Collection
+```
+https://documenter.getpostman.com/view/24860067/2sB2j6AVv7
 ```
 
 ## API Endpoints
