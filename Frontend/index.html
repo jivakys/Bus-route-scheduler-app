@@ -142,7 +142,6 @@
 
     <script src="./js/auth.js"></script>
     <script>
-        // Add smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -152,7 +151,6 @@
             });
         });
 
-        // Set minimum date for date input to today
         const dateInput = document.getElementById('date');
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;

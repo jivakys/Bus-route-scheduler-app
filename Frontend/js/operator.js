@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const time = document.getElementById("time").value;
 
             try {
-                const response = await fetch("http://localhost:3000/api/routes/search", {
+                const response = await fetch("https://bus-scheduler-backend.onrender.com/api/routes/search", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

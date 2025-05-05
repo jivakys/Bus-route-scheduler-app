@@ -294,7 +294,7 @@ async function showAddScheduleModal() {
 async function fetchRoutes() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/routes', {
+        const response = await fetch('https://bus-scheduler-backend.onrender.com/api/routes', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -309,7 +309,7 @@ async function fetchRoutes() {
 async function fetchBuses() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/buses', {
+        const response = await fetch('https://bus-scheduler-backend.onrender.com/api/buses', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -435,7 +435,7 @@ async function showEditScheduleModal(schedule) {
                 throw new Error('Authentication token not found. Please login again.');
             }
 
-            const response = await fetch(`http://localhost:3000/api/schedules/${schedule._id}`, {
+            const response = await fetch(`https://bus-scheduler-backend.onrender.com/api/schedules/${schedule._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

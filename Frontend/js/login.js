@@ -1,6 +1,6 @@
 // Constants
-const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
-const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
+const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
@@ -47,10 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Login error:", error);
         if (errorMessage) {
-          errorMessage.textContent = "An error occurred during login. Please check your connection.";
+          errorMessage.textContent =
+            "An error occurred during login. Please check your connection.";
           errorMessage.style.display = "block";
         } else {
-          alert("An error occurred during login. Please check your connection.");
+          alert(
+            "An error occurred during login. Please check your connection."
+          );
         }
       }
     });

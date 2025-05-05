@@ -1,52 +1,52 @@
 // Constants
-const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
-const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
+const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
 
 // Fetch data with authentication
 const fetchWithAuth = async (endpoint, options = {}) => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-        window.location.href = `${FRONTEND_URL}/html/login.html`;
-        return;
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    window.location.href = `${FRONTEND_URL}/html/login.html`;
+    return;
+  }
+
+  const defaultOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...defaultOptions,
+      ...options,
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem("adminToken");
+      window.location.href = `${FRONTEND_URL}/html/login.html`;
+      return;
     }
 
-    const defaultOptions = {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            ...defaultOptions,
-            ...options
-        });
-
-        if (response.status === 401) {
-            localStorage.removeItem('adminToken');
-            window.location.href = `${FRONTEND_URL}/html/login.html`;
-            return;
-        }
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Fetch error:', error);
-        throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
+  }
 };
 
 // Load Buses Section
 const loadBusesSection = async () => {
-    try {
-        const buses = await fetchWithAuth('/api/buses');
-        
-        const busesTable = document.querySelector('.admin-content');
-        busesTable.innerHTML = `
+  try {
+    const buses = await fetchWithAuth("/api/buses");
+
+    const busesTable = document.querySelector(".admin-content");
+    busesTable.innerHTML = `
             <div class="section-header">
                 <h2>Buses Management</h2>
                 <button class="add-btn" onclick="showAddBusModal()">
@@ -65,7 +65,9 @@ const loadBusesSection = async () => {
                         </tr>
                     </thead>
                     <tbody id="busesTableBody">
-                        ${buses.map(bus => `
+                        ${buses
+                          .map(
+                            (bus) => `
                             <tr>
                                 <td>${bus.busNumber}</td>
                                 <td>${bus.type}</td>
@@ -80,69 +82,71 @@ const loadBusesSection = async () => {
                                     </button>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                     </tbody>
                 </table>
             </div>
         `;
-    } catch (error) {
-        console.error('Error loading buses:', error);
-        document.querySelector('.admin-content').innerHTML = `
+  } catch (error) {
+    console.error("Error loading buses:", error);
+    document.querySelector(".admin-content").innerHTML = `
             <div class="error-message">
                 <h3>Error Loading Buses</h3>
                 <p>Please try again later or contact support if the problem persists.</p>
             </div>
         `;
-    }
+  }
 };
 
 // Add Bus
 const addBus = async (busData) => {
-    try {
-        await fetchWithAuth('/api/buses', {
-            method: 'POST',
-            body: JSON.stringify(busData)
-        });
-        await loadBusesSection();
-    } catch (error) {
-        console.error('Error adding bus:', error);
-        throw error;
-    }
+  try {
+    await fetchWithAuth("/api/buses", {
+      method: "POST",
+      body: JSON.stringify(busData),
+    });
+    await loadBusesSection();
+  } catch (error) {
+    console.error("Error adding bus:", error);
+    throw error;
+  }
 };
 
 // Edit Bus
 const editBus = async (busId, busData) => {
-    try {
-        await fetchWithAuth(`/api/buses/${busId}`, {
-            method: 'PUT',
-            body: JSON.stringify(busData)
-        });
-        await loadBusesSection();
-    } catch (error) {
-        console.error('Error editing bus:', error);
-        throw error;
-    }
+  try {
+    await fetchWithAuth(`/api/buses/${busId}`, {
+      method: "PUT",
+      body: JSON.stringify(busData),
+    });
+    await loadBusesSection();
+  } catch (error) {
+    console.error("Error editing bus:", error);
+    throw error;
+  }
 };
 
 // Delete Bus
 const deleteBus = async (busId) => {
-    if (!confirm('Are you sure you want to delete this bus?')) return;
-    
-    try {
-        await fetchWithAuth(`/api/buses/${busId}`, {
-            method: 'DELETE'
-        });
-        await loadBusesSection();
-    } catch (error) {
-        console.error('Error deleting bus:', error);
-        throw error;
-    }
+  if (!confirm("Are you sure you want to delete this bus?")) return;
+
+  try {
+    await fetchWithAuth(`/api/buses/${busId}`, {
+      method: "DELETE",
+    });
+    await loadBusesSection();
+  } catch (error) {
+    console.error("Error deleting bus:", error);
+    throw error;
+  }
 };
 
 // Export functions
 window.busFunctions = {
-    loadBusesSection,
-    addBus,
-    editBus,
-    deleteBus
+  loadBusesSection,
+  addBus,
+  editBus,
+  deleteBus,
 };

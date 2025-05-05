@@ -1,8 +1,8 @@
 // Admin Panel Main Script
 document.addEventListener("DOMContentLoaded", () => {
   // Constants
-  const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
-  const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+  const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
+  const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
 
   // DOM Elements
   const sidebarLinks = document.querySelectorAll(".sidebar-menu a");
@@ -19,15 +19,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const defaultOptions = {
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     };
 
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...defaultOptions,
-        ...options
+        ...options,
       });
 
       if (response.status === 401) {
@@ -55,36 +55,49 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchWithAuth("/api/routes"),
         fetchWithAuth("/api/buses"),
         fetchWithAuth("/api/users"),
-        fetchWithAuth("/api/bookings")
+        fetchWithAuth("/api/bookings"),
       ]);
 
       // Update stats
       document.getElementById("totalRoutes").textContent = routes.length;
       document.getElementById("totalBuses").textContent = buses.length;
       document.getElementById("totalUsers").textContent = users.length;
-      document.getElementById("activeBookings").textContent = 
-        bookings.filter(b => b.status === "active").length;
+      document.getElementById("activeBookings").textContent = bookings.filter(
+        (b) => b.status === "active"
+      ).length;
 
       // Update recent routes
-      const recentRoutesHtml = routes.slice(0, 5).map(route => `
+      const recentRoutesHtml = routes
+        .slice(0, 5)
+        .map(
+          (route) => `
         <tr>
           <td>${route.routeNumber}</td>
           <td>${route.startPoint}</td>
           <td>${route.endPoint}</td>
           <td>${new Date(route.createdAt).toLocaleDateString()}</td>
         </tr>
-      `).join("");
+      `
+        )
+        .join("");
       document.getElementById("recentRoutes").innerHTML = recentRoutesHtml;
 
       // Update recent bookings
-      const recentBookingsHtml = bookings.slice(0, 5).map(booking => `
+      const recentBookingsHtml = bookings
+        .slice(0, 5)
+        .map(
+          (booking) => `
         <tr>
           <td>${booking.busNumber}</td>
           <td>${booking.route}</td>
           <td>${new Date(booking.departureTime).toLocaleString()}</td>
-          <td><span class="status ${booking.status}">${booking.status}</span></td>
+          <td><span class="status ${booking.status}">${
+            booking.status
+          }</span></td>
         </tr>
-      `).join("");
+      `
+        )
+        .join("");
       document.getElementById("recentBookings").innerHTML = recentBookingsHtml;
     } catch (error) {
       console.error("Error loading dashboard:", error);
@@ -99,19 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Handle Sidebar Navigation
-  sidebarLinks.forEach(link => {
+  sidebarLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const section = link.getAttribute("data-section");
-      
+
       // Update active state
-      sidebarLinks.forEach(l => l.classList.remove("active"));
+      sidebarLinks.forEach((l) => l.classList.remove("active"));
       link.classList.add("active");
-      
+
       // Update header title
-      document.querySelector(".header-left h1").textContent = 
+      document.querySelector(".header-left h1").textContent =
         section.charAt(0).toUpperCase() + section.slice(1);
-      
+
       // Load section content
       if (section === "dashboard") {
         loadDashboard();
@@ -157,11 +170,14 @@ function initializeAdminPanel() {
 
 async function loadDashboardData() {
   try {
-    const response = await fetch("http://localhost:3000/api/admin/dashboard", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    const response = await fetch(
+      "https://bus-scheduler-backend.onrender.com/api/admin/dashboard",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch dashboard data");
