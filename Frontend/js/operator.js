@@ -9,7 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.role !== "operator") {
-            window.location.href = "../index.html";
+            // Only redirect to index if we're not already on the operator page
+            if (!window.location.pathname.includes("operator.html")) {
+                window.location.href = "../index.html";
+            }
             return;
         }
     } catch (error) {

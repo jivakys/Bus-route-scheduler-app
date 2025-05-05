@@ -1,5 +1,11 @@
 // Function to check if user is logged in
 function checkAuthState() {
+  // Don't run auth check on admin pages
+  if (window.location.pathname.includes("admin.html")) {
+    console.log("Skipping auth check on admin page");
+    return;
+  }
+
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const userRole = localStorage.getItem("userRole");
@@ -14,19 +20,6 @@ function checkAuthState() {
   console.log("User Role:", userRole);
   console.log("Current Path:", window.location.pathname);
 
-  // If we're on the admin page, only check if user is admin
-  if (window.location.pathname.includes("admin.html")) {
-    if (token && userRole === "admin") {
-      console.log("Admin page - User is authenticated as admin");
-      return;
-    } else {
-      console.log("Admin page - User is not authenticated as admin, redirecting to login");
-      window.location.href = `${FRONTEND_URL}/html/login.html`;
-      return;
-    }
-  }
-
-  // For non-admin pages
   if (token && username) {
     // User is logged in
     if (userProfile) userProfile.style.display = "flex";
@@ -37,6 +30,17 @@ function checkAuthState() {
     // Check if user is admin
     if (userRole === "admin" && adminLink) {
       adminLink.style.display = "block";
+    }
+
+    // Handle role-based redirects only if we're on the index page
+    if (window.location.pathname.endsWith("index.html")) {
+      if (userRole === "admin") {
+        console.log("Redirecting admin to admin page");
+        window.location.href = "/html/admin.html";
+      } else if (userRole === "operator") {
+        console.log("Redirecting operator to operator page");
+        window.location.href = "/html/operator.html";
+      }
     }
   } else {
     // User is not logged in
@@ -54,7 +58,7 @@ function handleLogout() {
   localStorage.removeItem("username");
   localStorage.removeItem("userRole");
   checkAuthState();
-  window.location.href = `${FRONTEND_URL}/index.html`;
+  window.location.href = "/index.html";
 }
 
 // Initialize auth state when page loads
@@ -77,24 +81,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch("https://bus-scheduler-backend.onrender.com/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
+        const response = await fetch(
+          "https://bus-scheduler-backend.onrender.com/api/auth/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          }
+        );
 
         const data = await response.json();
         if (response.ok) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("username", data.username);
           localStorage.setItem("userRole", data.role);
-          // Check if user is admin
           if (data.role === "admin") {
             window.location.href = "/html/admin.html";
           } else {
-            window.location.href = "/";
+            window.location.href = "/index.html";
           }
         } else {
           alert(data.message || "Login failed");
@@ -141,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3000/api/auth/register",
+          "https://bus-scheduler-backend.onrender.com/api/auth/register",
           {
             method: "POST",
             headers: {

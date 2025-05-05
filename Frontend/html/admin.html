@@ -286,46 +286,12 @@
         </main>
     </div>
 
-    <!-- Configuration for deployed environment -->
-    <script>
-        const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
-        const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
-        
-        const checkAuth = async () => {
-            const token = localStorage.getItem("token");
-            const userRole = localStorage.getItem("userRole");
-            
-            if (!token || userRole !== "admin") {
-                console.log("Admin auth check failed - redirecting to login");
-                window.location.href = `${FRONTEND_URL}/html/login.html`;
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/admin/verify`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Authentication failed');
-                }
-                
-                const data = await response.json();
-                document.getElementById('adminName').textContent = data.name || 'Admin';
-            } catch (error) {
-                console.error('Auth error:', error);
-                localStorage.removeItem("token");
-                localStorage.removeItem("userRole");
-                window.location.href = `${FRONTEND_URL}/html/login.html`;
-            }
-        };
-        
-        // Initialize auth check
-        checkAuth();
+    <!-- Admin Scripts -->
+    <script type="module">
+        import { initializeAdminPage } from '../js/admin/auth.js';
+        document.addEventListener('DOMContentLoaded', initializeAdminPage);
     </script>
-
+    
     <!-- Main Admin Script -->
     <script src="../js/admin.js"></script>
     <!-- Admin Section Scripts -->
