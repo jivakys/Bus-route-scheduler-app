@@ -10,10 +10,17 @@ require("dotenv").config();
 const app = express();
 const httpServer = createServer(app);
 
-// CORS configuration - Only allow deployed frontend URL
+// CORS configuration
 app.use(
   cors({
-    origin: "https://bus-route-scheduler-app.vercel.app",
+    origin: [
+      "http://localhost:5000",
+      "http://127.0.0.1:5000",
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+      "http://127.0.0.1:3000",
+      "http://localhost:3000",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
@@ -22,7 +29,7 @@ app.use(
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://bus-route-scheduler-app.vercel.app",
+    origin: ["http://localhost:5000", "http://127.0.0.1:5000"],
     methods: ["GET", "POST"],
   },
 });
