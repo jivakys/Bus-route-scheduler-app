@@ -20,11 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Origin": window.location.origin
+            "Accept": "application/json"
           },
           mode: "cors",
-          credentials: "include",
+          credentials: "omit",
           body: JSON.stringify({ email, password }),
         });
 

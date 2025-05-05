@@ -12,15 +12,26 @@ function checkAuthState() {
   console.log("Token:", token ? "Present" : "Missing");
   console.log("Username:", username);
   console.log("User Role:", userRole);
-  console.log("User Profile Element:", userProfile);
-  console.log("Login Buttons Element:", loginButtons);
-  console.log("User Name Element:", userName);
+  console.log("Current Path:", window.location.pathname);
 
+  // If we're on the admin page, only check if user is admin
+  if (window.location.pathname.includes("admin.html")) {
+    if (token && userRole === "admin") {
+      console.log("Admin page - User is authenticated as admin");
+      return;
+    } else {
+      console.log("Admin page - User is not authenticated as admin, redirecting to login");
+      window.location.href = `${FRONTEND_URL}/html/login.html`;
+      return;
+    }
+  }
+
+  // For non-admin pages
   if (token && username) {
     // User is logged in
-    userProfile.style.display = "flex";
-    loginButtons.style.display = "none";
-    userName.textContent = username;
+    if (userProfile) userProfile.style.display = "flex";
+    if (loginButtons) loginButtons.style.display = "none";
+    if (userName) userName.textContent = username;
     console.log("User is logged in, displaying username:", username);
 
     // Check if user is admin
@@ -29,11 +40,9 @@ function checkAuthState() {
     }
   } else {
     // User is not logged in
-    userProfile.style.display = "none";
-    loginButtons.style.display = "flex";
-    if (adminLink) {
-      adminLink.style.display = "none";
-    }
+    if (userProfile) userProfile.style.display = "none";
+    if (loginButtons) loginButtons.style.display = "flex";
+    if (adminLink) adminLink.style.display = "none";
     console.log("User is not logged in, showing login buttons");
   }
 }

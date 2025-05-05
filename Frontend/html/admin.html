@@ -288,13 +288,15 @@
 
     <!-- Configuration for deployed environment -->
     <script>
-        const API_BASE_URL = 'https://bus-scheduler-backend.vercel.app';
-        const FRONTEND_URL = 'https://bus-route-scheduler-app.vercel.app';
+        const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
+        const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
         
-        // Check if user is authenticated
         const checkAuth = async () => {
-            const token = localStorage.getItem('adminToken');
-            if (!token) {
+            const token = localStorage.getItem("token");
+            const userRole = localStorage.getItem("userRole");
+            
+            if (!token || userRole !== "admin") {
+                console.log("Admin auth check failed - redirecting to login");
                 window.location.href = `${FRONTEND_URL}/html/login.html`;
                 return;
             }
@@ -314,6 +316,8 @@
                 document.getElementById('adminName').textContent = data.name || 'Admin';
             } catch (error) {
                 console.error('Auth error:', error);
+                localStorage.removeItem("token");
+                localStorage.removeItem("userRole");
                 window.location.href = `${FRONTEND_URL}/html/login.html`;
             }
         };
