@@ -4,12 +4,11 @@ A comprehensive bus route scheduling and management system with tracking capabil
 
 ## Features
 
+- User authentication and authorization
 - Admin panel for route planning and management
 - Stop management
 - Schedule management
-- User authentication and authorization
 - Bus fleet management
-- Route optimization
 
 ## Tech Stack
 
@@ -28,11 +27,13 @@ A comprehensive bus route scheduling and management system with tracking capabil
 - CSS
 - JavaScript
 
-## Prerequisites
+## Deployed Link
 
-- Node.js (v14 or higher)
-- MongoDB (v4.4 or higher)
-- npm or yarn
+Backend Link: [https://bus-scheduler-backend.onrender.com](https://bus-scheduler-backend.onrender.com)
+
+## Postman Collection
+
+[https://documenter.getpostman.com/view/24860067/2sB2j6AVv7](https://documenter.getpostman.com/view/24860067/2sB2j6AVv7)
 
 ## Installation
 
@@ -64,18 +65,11 @@ FRONTEND_URL=http://localhost:3000
 ```bash
 npm run dev
 ```
-## Deployed Link
-```bash
-Backend Link - https://bus-scheduler-backend.onrender.com
-```
+
 ### Admin Creds
 ```bash
 email - jivaksute@gmail.com
 password - jivakadmin
-```
-## Postman Collection
-```
-https://documenter.getpostman.com/view/24860067/2sB2j6AVv7
 ```
 
 ## API Endpoints
@@ -101,7 +95,6 @@ https://documenter.getpostman.com/view/24860067/2sB2j6AVv7
 - POST /api/stops - Create a new stop (admin only)
 - PUT /api/stops/:id - Update a stop (admin only)
 - DELETE /api/stops/:id - Delete a stop (admin only)
-- GET /api/stops/nearby - Find stops near a location
 
 ### Schedules
 
@@ -110,7 +103,6 @@ https://documenter.getpostman.com/view/24860067/2sB2j6AVv7
 - POST /api/schedules - Create a new schedule (admin only)
 - PUT /api/schedules/:id - Update a schedule (admin only)
 - DELETE /api/schedules/:id - Delete a schedule (admin only)
-- GET /api/schedules/date/:date - Get schedules for a specific date
 
 ### Buses
 
@@ -119,14 +111,7 @@ https://documenter.getpostman.com/view/24860067/2sB2j6AVv7
 - POST /api/buses - Create a new bus (admin only)
 - PUT /api/buses/:id - Update a bus (admin only)
 - DELETE /api/buses/:id - Delete a bus (admin only)
-- PATCH /api/buses/:id/location - Update bus location
 
-
-
-## Contact
-
-Your Name - jivakysute@gmail.com
-Project Link: [https://github.com/yourusername/bus-route-scheduler-app](https://github.com/jivakys/Bus-route-scheduler-app.git)
 
 ## Screenshots
 
