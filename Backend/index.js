@@ -9,33 +9,39 @@ const path = require("path");
 const app = express();
 const httpServer = createServer(app);
 
-// CORS configuration for localhost
+// Enable CORS for all routes
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://bus-route-scheduler-app.vercel.app",
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "Origin",
+      "X-Requested-With",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
+// Handle preflight requests
+app.options("*", cors());
+
 const io = new Server(httpServer, {
   cors: {
     origin: [
-      "http://localhost:3000",
       "https://bus-route-scheduler-app.vercel.app",
+      "http://127.0.0.1:5500",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   },
 });
 
-// Basic security
 app.use(
   helmet({
     contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 

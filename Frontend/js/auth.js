@@ -36,10 +36,10 @@ function checkAuthState() {
     if (window.location.pathname.endsWith("index.html")) {
       if (userRole === "admin") {
         console.log("Redirecting admin to admin page");
-        window.location.href = "/html/admin.html";
+        window.location.replace("/html/admin.html");
       } else if (userRole === "operator") {
         console.log("Redirecting operator to operator page");
-        window.location.href = "/html/operator.html";
+        window.location.replace("/html/operator.html");
       }
     }
   } else {
@@ -57,8 +57,7 @@ function handleLogout() {
   localStorage.removeItem("token");
   localStorage.removeItem("username");
   localStorage.removeItem("userRole");
-  checkAuthState();
-  window.location.href = "/index.html";
+  window.location.replace("/index.html");
 }
 
 // Initialize auth state when page loads
