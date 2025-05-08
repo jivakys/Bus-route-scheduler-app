@@ -1,185 +1,129 @@
-// Function to check if user is logged in
-function checkAuthState() {
-  // Don't run auth check on admin pages
-  if (window.location.pathname.includes("admin.html")) {
-    console.log("Skipping auth check on admin page");
-    return;
-  }
+// Constants
+const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
 
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-  const userRole = localStorage.getItem("userRole");
-  const userProfile = document.getElementById("userProfile");
-  const loginButtons = document.getElementById("loginButtons");
-  const userName = document.getElementById("userName");
-  const adminLink = document.getElementById("adminLink");
+// Function to check authentication state
+function checkAuth() {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("userRole");
+    const username = localStorage.getItem("username");
 
-  console.log("Auth State Check:");
-  console.log("Token:", token ? "Present" : "Missing");
-  console.log("Username:", username);
-  console.log("User Role:", userRole);
-  console.log("Current Path:", window.location.pathname);
+    // Get DOM elements
+    const userProfile = document.getElementById("userProfile");
+    const loginButtons = document.getElementById("loginButtons");
+    const userName = document.getElementById("userName");
+    const adminLink = document.getElementById("adminLink");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-  if (token && username) {
-    // User is logged in
-    if (userProfile) userProfile.style.display = "flex";
-    if (loginButtons) loginButtons.style.display = "none";
-    if (userName) userName.textContent = username;
-    console.log("User is logged in, displaying username:", username);
+    if (token && userRole) {
+        // User is logged in
+        if (userProfile) userProfile.style.display = "flex";
+        if (loginButtons) loginButtons.style.display = "none";
+        if (userName) userName.textContent = username;
+        
+        // Show admin link only for admin users
+        if (adminLink) {
+            adminLink.style.display = userRole === "admin" ? "block" : "none";
+        }
 
-    // Check if user is admin
-    if (userRole === "admin" && adminLink) {
-      adminLink.style.display = "block";
+        // Setup logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                localStorage.clear();
+                window.location.href = "./html/login.html";
+            });
+        }
+    } else {
+        // User is not logged in
+        if (userProfile) userProfile.style.display = "none";
+        if (loginButtons) loginButtons.style.display = "flex";
+        if (adminLink) adminLink.style.display = "none";
     }
-
-    // Handle role-based redirects only if we're on the index page
-    if (window.location.pathname.endsWith("index.html")) {
-      if (userRole === "admin") {
-        console.log("Redirecting admin to admin page");
-        window.location.replace("/html/admin.html");
-      } else if (userRole === "operator") {
-        console.log("Redirecting operator to operator page");
-        window.location.replace("/html/operator.html");
-      }
-    }
-  } else {
-    // User is not logged in
-    if (userProfile) userProfile.style.display = "none";
-    if (loginButtons) loginButtons.style.display = "flex";
-    if (adminLink) adminLink.style.display = "none";
-    console.log("User is not logged in, showing login buttons");
-  }
 }
+
+// Initialize auth state when DOM is loaded
+document.addEventListener("DOMContentLoaded", checkAuth);
 
 // Function to handle logout
 function handleLogout() {
-  console.log("Logging out...");
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  localStorage.removeItem("userRole");
-  window.location.replace("/index.html");
+    localStorage.clear();
+    window.location.href = "./html/login.html";
 }
 
 // Initialize auth state when page loads
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Auth.js initialized");
-  checkAuthState();
+    checkAuth();
 
-  // Add logout event listener
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", handleLogout);
-  }
+    // Add logout event listener
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", handleLogout);
+    }
 
-  // Handle login form submission
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    // Handle register form submission
+    const registerForm = document.getElementById("registerForm");
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
 
-      try {
-        const response = await fetch(
-          "https://bus-scheduler-backend.onrender.com/api/auth/login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
+            // Frontend validation
+            if (username.length < 3) {
+                alert("Username must be at least 3 characters long");
+                return;
+            }
 
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("username", data.username);
-          localStorage.setItem("userRole", data.role);
-          if (data.role === "admin") {
-            window.location.href = "/html/admin.html";
-          } else {
-            window.location.href = "/index.html";
-          }
-        } else {
-          alert(data.message || "Login failed");
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("An error occurred during login");
-      }
-    });
-  }
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters long");
+                return;
+            }
 
-  // Handle register form submission
-  const registerForm = document.getElementById("registerForm");
-  if (registerForm) {
-    registerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+            if (password !== confirmPassword) {
+                alert("Passwords do not match");
+                return;
+            }
 
-      // Frontend validation
-      if (username.length < 3) {
-        alert("Username must be at least 3 characters long");
-        return;
-      }
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address");
+                return;
+            }
 
-      if (password.length < 6) {
-        alert("Password must be at least 6 characters long");
-        return;
-      }
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password,
+                        role: "operator",
+                    }),
+                });
 
-      if (password !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      }
-
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert("Please enter a valid email address");
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          "https://bus-scheduler-backend.onrender.com/api/auth/register",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username,
-              email,
-              password,
-              role: "operator",
-            }),
-          }
-        );
-
-        const data = await response.json();
-        if (response.ok) {
-          alert("Registration successful! Please login.");
-          window.location.href = "login.html";
-        } else {
-          // Display validation errors from the server
-          if (data.errors) {
-            const errorMessage = data.errors
-              .map((error) => error.msg)
-              .join("\n");
-            alert(errorMessage);
-          } else {
-            alert(data.message || "Registration failed");
-          }
-        }
-      } catch (error) {
-        console.error("Registration error:", error);
-        alert("An error occurred during registration");
-      }
-    });
-  }
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Registration successful! Please login.");
+                    window.location.href = "login.html";
+                } else {
+                    if (data.errors) {
+                        const errorMessage = data.errors
+                            .map((error) => error.msg)
+                            .join("\n");
+                        alert(errorMessage);
+                    } else {
+                        alert(data.message || "Registration failed");
+                    }
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                alert("An error occurred during registration");
+            }
+        });
+    }
 });

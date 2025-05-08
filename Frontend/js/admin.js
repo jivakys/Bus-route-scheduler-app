@@ -9,14 +9,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const adminContent = document.querySelector(".admin-content");
   const logoutBtn = document.querySelector(".logout-btn");
 
+  // Check authentication
+  const token = localStorage.getItem("token");
+  const userRole = localStorage.getItem("userRole");
+
+  if (!token || userRole !== "admin") {
+    window.location.href = `${FRONTEND_URL}/html/login.html`;
+    return;
+  }
+
   // Fetch data with authentication
   const fetchWithAuth = async (endpoint, options = {}) => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      window.location.href = `${FRONTEND_URL}/html/login.html`;
-      return;
-    }
-
     const defaultOptions = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.status === 401) {
         // Token expired or invalid
-        localStorage.removeItem("adminToken");
+        localStorage.clear();
         window.location.href = `${FRONTEND_URL}/html/login.html`;
         return;
       }
@@ -101,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("recentBookings").innerHTML = recentBookingsHtml;
     } catch (error) {
       console.error("Error loading dashboard:", error);
-      // Show error message to user
       adminContent.innerHTML = `
         <div class="error-message">
           <h3>Error Loading Dashboard</h3>
@@ -136,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle Logout
   logoutBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    localStorage.removeItem("adminToken");
+    localStorage.clear();
     window.location.href = `${FRONTEND_URL}/html/login.html`;
   });
 
