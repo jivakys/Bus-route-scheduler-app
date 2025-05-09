@@ -5,49 +5,21 @@ const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
 function checkAuth() {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
-  const username = localStorage.getItem("username");
 
-  // Get DOM elements
-  const userProfile = document.getElementById("userProfile");
-  const loginButtons = document.getElementById("loginButtons");
-  const userName = document.getElementById("userName");
-  const adminLink = document.getElementById("adminLink");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const adminName = document.getElementById("adminName");
+  if (!token) {
+    window.location.href = "./login.html";
+    return;
+  }
 
-  if (token && userRole) {
-    // User is logged in
-    if (userProfile) userProfile.style.display = "flex";
-    if (loginButtons) loginButtons.style.display = "none";
-    if (userName) userName.textContent = username;
-    if (adminName) adminName.textContent = username;
+  if (userRole !== "admin") {
+    window.location.href = "../index.html";
+    return;
+  }
 
-    // Show admin link only for admin users
-    if (adminLink) {
-      adminLink.style.display = userRole === "admin" ? "block" : "none";
-    }
-
-    // Setup logout button
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", handleLogout);
-    }
-
-    // If on admin page, verify admin role
-    if (window.location.pathname.includes("admin.html")) {
-      if (userRole !== "admin") {
-        window.location.href = "./login.html";
-      }
-    }
-  } else {
-    // User is not logged in
-    if (userProfile) userProfile.style.display = "none";
-    if (loginButtons) loginButtons.style.display = "flex";
-    if (adminLink) adminLink.style.display = "none";
-
-    // If on admin page, redirect to login
-    if (window.location.pathname.includes("admin.html")) {
-      window.location.href = "./login.html";
-    }
+  // Set admin name
+  const adminName = localStorage.getItem("username");
+  if (adminName) {
+    document.getElementById("adminName").textContent = adminName;
   }
 }
 

@@ -1,12 +1,11 @@
 // Constants
 const API_BASE_URL = "https://bus-scheduler-backend.onrender.com";
-const FRONTEND_URL = "https://bus-route-scheduler-app.vercel.app";
 
 // Fetch data with authentication
 const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem("adminToken");
   if (!token) {
-    window.location.href = `${FRONTEND_URL}/html/login.html`;
+    window.location.href = `./html/login.html`;
     return;
   }
 
@@ -25,7 +24,7 @@ const fetchWithAuth = async (endpoint, options = {}) => {
 
     if (response.status === 401) {
       localStorage.removeItem("adminToken");
-      window.location.href = `${FRONTEND_URL}/html/login.html`;
+      window.location.href = `./html/login.html`;
       return;
     }
 

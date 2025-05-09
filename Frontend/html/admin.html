@@ -222,7 +222,8 @@
             </header>
 
             <div class="admin-content">
-                <div class="dashboard-container">
+                <!-- Dashboard Section -->
+                <div class="dashboard-container" id="dashboardSection">
                     <div class="stats-grid">
                         <div class="stat-card">
                             <h3>Total Routes</h3>
@@ -237,7 +238,7 @@
                             <p id="totalUsers">0</p>
                         </div>
                         <div class="stat-card">
-                            <h3>Active Bookings</h3>
+                            <h3>Active Schedules</h3>
                             <p id="activeBookings">0</p>
                         </div>
                     </div>
@@ -252,18 +253,18 @@
                                             <th>Route Number</th>
                                             <th>Start Point</th>
                                             <th>End Point</th>
-                                            <th>Created At</th>
+                                            <th>Date Added</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recentRoutes">
-                                        <!-- Recent routes will be populated here -->
+                                        <!-- Routes will be loaded here -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         
                         <div class="recent-card">
-                            <h3>Recent Bookings</h3>
+                            <h3>Recent Schedules</h3>
                             <div class="table-container">
                                 <table class="admin-table">
                                     <thead>
@@ -275,11 +276,198 @@
                                         </tr>
                                     </thead>
                                     <tbody id="recentBookings">
-                                        <!-- Recent bookings will be populated here -->
+                                        <!-- Recent schedules will be populated here -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Routes Section -->
+                <div class="routes-container" id="routesSection" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Routes</h2>
+                        <button class="add-btn" onclick="showAddRouteForm()">
+                            <i class="fas fa-plus"></i> Add New Route
+                        </button>
+                    </div>
+
+                    <!-- Add Route Form -->
+                    <div class="form-container" id="addRouteForm" style="display: none;">
+                        <form id="routeForm">
+                            <div class="form-group">
+                                <label for="routeNumber">Route Number</label>
+                                <input type="text" id="routeNumber" name="routeNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="startPoint">Start Point</label>
+                                <input type="text" id="startPoint" name="startPoint" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="endPoint">End Point</label>
+                                <input type="text" id="endPoint" name="endPoint" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="distance">Distance (km)</label>
+                                <input type="number" id="distance" name="distance" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="estimatedTime">Estimated Time (minutes)</label>
+                                <input type="number" id="estimatedTime" name="estimatedTime" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Add Route</button>
+                                <button type="button" class="cancel-btn" onclick="hideAddRouteForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Routes Table -->
+                    <div class="table-container">
+                        <table class="admin-table" id="routesTable">
+                            <thead>
+                                <tr>
+                                    <th>Route Number</th>
+                                    <th>Start Point</th>
+                                    <th>End Point</th>
+                                    <th>Distance</th>
+                                    <th>Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Routes will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Buses Section -->
+                <div class="routes-container" id="busesSection" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Buses</h2>
+                        <button class="add-btn" onclick="showAddBusForm()">
+                            <i class="fas fa-plus"></i> Add New Bus
+                        </button>
+                    </div>
+
+                    <!-- Add Bus Form -->
+                    <div class="form-container" id="addBusForm" style="display: none;">
+                        <form id="busForm">
+                            <div class="form-group">
+                                <label for="busNumber">Bus Number</label>
+                                <input type="text" id="busNumber" name="busNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="capacity">Capacity</label>
+                                <input type="number" id="capacity" name="capacity" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="model">Model</label>
+                                <input type="text" id="model" name="model" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Add Bus</button>
+                                <button type="button" class="cancel-btn" onclick="hideAddBusForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Buses Table -->
+                    <div class="table-container">
+                        <table class="admin-table" id="busesTable">
+                            <thead>
+                                <tr>
+                                    <th>Bus Number</th>
+                                    <th>Capacity</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Buses will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Schedules Section -->
+                <div class="routes-container" id="schedulesSection" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Schedules</h2>
+                        <button class="add-btn" onclick="showAddScheduleForm()">
+                            <i class="fas fa-plus"></i> Add New Schedule
+                        </button>
+                    </div>
+
+                    <!-- Add Schedule Form -->
+                    <div class="form-container" id="addScheduleForm" style="display: none;">
+                        <form id="scheduleForm">
+                            <div class="form-group">
+                                <label for="busId">Bus</label>
+                                <select id="busId" name="busId" required>
+                                    <!-- Buses will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="routeId">Route</label>
+                                <select id="routeId" name="routeId" required>
+                                    <!-- Routes will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="departureTime">Departure Time</label>
+                                <input type="datetime-local" id="departureTime" name="departureTime" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Add Schedule</button>
+                                <button type="button" class="cancel-btn" onclick="hideAddScheduleForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Schedules Table -->
+                    <div class="table-container">
+                        <table class="admin-table" id="schedulesTable">
+                            <thead>
+                                <tr>
+                                    <th>Bus</th>
+                                    <th>Route</th>
+                                    <th>Departure Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Schedules will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div class="routes-container" id="usersSection" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Users</h2>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="table-container">
+                        <table class="admin-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -287,13 +475,9 @@
     </div>
 
     <!-- Admin Scripts -->
+    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/admin.js"></script>
-    <!-- Admin Section Scripts -->
-    <script src="../js/admin/routes.js"></script>
-    <script src="../js/admin/buses.js"></script>
-    <script src="../js/admin/schedules.js"></script>
-    <script src="../js/admin/users.js"></script>
 </body>
 
 </html>
