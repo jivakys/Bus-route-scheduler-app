@@ -25,7 +25,6 @@ app.use(
   })
 );
 
-// Handle preflight requests
 app.options("*", cors());
 
 const io = new Server(httpServer, {
